@@ -4,7 +4,36 @@ from datetime import datetime
 
 
 class BtcPriceFetcher:
+    """
+    BtcPriceFetcher is a class designed to fetch Bitcoin (BTC) prices from the Binance API
+    for a specified time range and interval, and save them to a CSV file.
+
+    Attributes:
+    - api_url (str): The Binance API URL for fetching klines data.
+    - symbol (str): The trading pair symbol (default is "BTCUSDT").
+    - interval (str): The time interval for klines (default is "1m" for 1 minute).
+    - start_date (datetime): The start date for fetching prices (default is January 1, 2018).
+    - end_date (datetime): The end date for fetching prices (default is January 1, 2019).
+    - start_timestamp (int): The start timestamp in milliseconds calculated from start_date.
+    - end_timestamp (int): The end timestamp in milliseconds calculated from end_date.
+    - limit (int): The limit parameter for the Binance API request (default is a large value).
+    - prices (list): A list to store fetched prices as tuples of (timestamp, price).
+
+    Methods:
+    - fetch_btc_prices(): Fetches BTC prices from the Binance API and populates the prices list.
+    - save_prices_to_csv(filename): Saves the fetched BTC prices to a CSV file with the specified filename.
+    """
+
     def __init__(self, symbol="BTCUSDT", interval="1m", start_date=datetime(2018, 1, 1), end_date=datetime(2019, 1, 1)):
+        """
+        Initializes a new instance of the BtcPriceFetcher class with default or user-specified values.
+
+        Parameters:
+        - symbol (str): The trading pair symbol (default is "BTCUSDT").
+        - interval (str): The time interval for klines (default is "1m" for 1 minute).
+        - start_date (datetime): The start date for fetching prices (default is January 1, 2018).
+        - end_date (datetime): The end date for fetching prices (default is January 1, 2019).
+        """
         self.api_url = "https://api.binance.com/api/v3/klines"
         self.symbol = symbol
         self.interval = interval
@@ -14,6 +43,10 @@ class BtcPriceFetcher:
         self.prices = []
 
     def fetch_btc_prices(self):
+        """
+        Fetches BTC prices from the Binance API for the specified time range and interval
+        and populates the prices list with tuples of (timestamp, price).
+        """
         while self.start_timestamp < self.end_timestamp:
             params = {
                 "symbol": self.symbol,
@@ -35,6 +68,12 @@ class BtcPriceFetcher:
             self.start_timestamp = int((timestamp + 60) * 1000)  # Add 60 seconds
 
     def save_prices_to_csv(self, filename):
+        """
+        Saves the fetched BTC prices to a CSV file with the specified filename.
+
+        Parameters:
+        - filename (str): The name of the CSV file to save the prices to.
+        """
         header = ["Timestamp", "Price"]
 
         with open(filename, "w", newline="") as csvfile:
@@ -48,13 +87,8 @@ class BtcPriceFetcher:
 
         print("BTC prices saved to", filename)
 
-# Explanation:
-# This code defines a class BtcPriceFetcher, which encapsulates the functionality for fetching Bitcoin (BTC) prices
-# from the Binance API for a specified time range and interval, and saving them to a CSV file.
-# You can create an instance of the BtcPriceFetcher class and then call its methods to fetch and save BTC prices.
-# Here's an example of how to use it:
 
-
+# Example usage:
 if __name__ == "__main__":
     btc_fetcher = BtcPriceFetcher()
     btc_fetcher.fetch_btc_prices()
